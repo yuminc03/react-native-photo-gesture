@@ -1,27 +1,22 @@
 import React from 'react';
 import { Image, ImageStyle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  interpolate,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
+import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 export const GesturePhotoView: React.FC<{
-  url: string;
-  photoWidth: number;
+  url: string; 
+  photoWidth: number; 
   photoHeight: number;
-  imageStyle?: ImageStyle;
+  imageSytle?: ImageStyle;
   onGesture: (direction: 'left' | 'right') => void;
 }> = (props) => {
-  const start = useSharedValue({ x: 0, y: 0 });
-  const offset = useSharedValue({ x: 0, y: 0 });
-
+  const start = useSharedValue({x: 0, y: 0});
+  const offset = useSharedValue({x: 0, y: 0});
+  
   const gesture = Gesture.Pan()
     .runOnJS(true)
     .onBegin(() => {})
-    .onUpdate((event) => {
+    .onUpdate(event => {
       offset.value = {
         x: event.translationX + start.value.x,
         y: offset.value.y,
@@ -29,8 +24,7 @@ export const GesturePhotoView: React.FC<{
     })
     .onFinalize(() => {
       if (offset.value.x < -150) {
-        //왼쪽으로 넘어간 상태
-
+        // 왼쪽으로 넘어간 상태
         runOnJS(props.onGesture)('left');
       }
 
@@ -43,7 +37,7 @@ export const GesturePhotoView: React.FC<{
         y: 0,
       };
     });
-
+      
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -51,22 +45,21 @@ export const GesturePhotoView: React.FC<{
           translateX: interpolate(
             offset.value.x,
             [-200, 0, 200],
-            [-100, 0, 100]
+            [-100, 0, 100],
           ),
         },
-
         {
           translateY: interpolate(
             offset.value.x,
             [-200, 0, 200],
-            [-50, 0, -50]
+            [-50, 0, -50],
           ),
         },
         {
           rotate: `${interpolate(
             offset.value.x,
             [-200, 0, 200],
-            [30, 0, -30]
+            [30, 0, -30],
           )}deg`,
         },
       ],
@@ -75,17 +68,18 @@ export const GesturePhotoView: React.FC<{
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Animated.View style={animatedStyle}>
-          <Image
-            source={{ uri: props.url }}
-            style={[
-              props.imageStyle,
-              { width: props.photoWidth, height: props.photoHeight },
-            ]}
-          />
-        </Animated.View>
+    <Animated.View
+      style={{alignItems: 'center', justifyContent: 'center'}}>
+      <Animated.View style={animatedStyle}>
+        <Image
+          source={{uri: props.url}}
+          style={[
+            props.imageSytle, 
+            { width: props.photoWidth, height: props.photoHeight }
+          ]}
+        />
       </Animated.View>
-    </GestureDetector>
-  );
+    </Animated.View>
+  </GestureDetector>
+  )
 };
